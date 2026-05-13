@@ -179,22 +179,4 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API para gerenciar jogos',
     'VERSION': '1.0.0',
     'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
-    'AUTHENTICATION_WHITELIST': [
-        'jogos.authentication.FlexibleTokenAuthentication',
-    ],
-    'SECURITY': [
-        {
-            'tokenAuth': []
-        }
-    ],
-    'COMPONENTS': {
-        'securitySchemes': {
-            'tokenAuth': {
-                'type': 'apiKey',
-                'in': 'header',
-                'name': 'Authorization',
-                'description': 'Token-based authentication with `Token` prefix. Example: `Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b`'
-            }
-        }
-    }
 }
