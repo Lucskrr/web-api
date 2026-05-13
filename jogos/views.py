@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from drf_spectacular.utils import OpenApiExample, extend_schema
 
 from .models import Jogo
@@ -59,6 +61,9 @@ class LoginView(APIView):
 
 
 class JogosListCreateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     @extend_schema(responses=JogoSerializer(many=True))
     def get(self, request):
         lista = Jogo.objects.all()
@@ -103,6 +108,9 @@ class JogosListCreateView(APIView):
 
 
 class JogoDetailView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     @extend_schema(responses=JogoSerializer)
     def get(self, request, id):
         try:
