@@ -5,9 +5,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import permission_classes, authentication_classes
 from drf_spectacular.utils import OpenApiExample, extend_schema
 
+from .authentication import FlexibleTokenAuthentication
 from .models import Jogo
 from .serializers import JogoSerializer, LoginSerializer, TokenSerializer
 
@@ -63,7 +64,7 @@ class LoginView(APIView):
 
 
 class JogosListCreateView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [FlexibleTokenAuthentication]
     permission_classes = [IsAuthenticated]
     
     @extend_schema(responses=JogoSerializer(many=True))
@@ -110,7 +111,7 @@ class JogosListCreateView(APIView):
 
 
 class JogoDetailView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [FlexibleTokenAuthentication]
     permission_classes = [IsAuthenticated]
     
     @extend_schema(responses=JogoSerializer)
