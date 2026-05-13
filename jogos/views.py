@@ -1,6 +1,7 @@
-import uuid
-
+from django.contrib.auth import get_user_model
+from django.shortcuts import redirect
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from drf_spectacular.utils import OpenApiExample, extend_schema
@@ -13,6 +14,9 @@ class LoginView(APIView):
     authentication_classes = []
     permission_classes = []
 
+    def get(self, request):
+        return redirect('/api/docs/')
+
     @extend_schema(
         request=LoginSerializer,
         responses=TokenSerializer,
@@ -24,7 +28,7 @@ class LoginView(APIView):
             ),
             OpenApiExample(
                 'Token de resposta',
-                value={'token': '550e8400-e29b-41d4-a716-446655440000'},
+                value={'token': '5f4dcc3b5aa765d61d8327deb882cf99a4f85b91'},
                 response_only=True,
             ),
         ],
@@ -36,7 +40,17 @@ class LoginView(APIView):
         password = serializer.validated_data['password']
 
         if email == 'usuario@esoft.com' and password == 'Abc123':
-            return Response({"token": str(uuid.uuid4())})
+            user_model = get_user_model()
+            user, created = user_model.objects.get_or_create(
+                username='usuario@esoft.com',
+                defaults={'email': 'usuario@esoft.com'},
+            )
+            if created:
+                user.set_password('Abc123')
+                user.save()
+
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
 
         return Response(
             {"erro": "Credenciais inválidas"},
@@ -45,9 +59,6 @@ class LoginView(APIView):
 
 
 class JogosListCreateView(APIView):
-    authentication_classes = []
-    permission_classes = []
-
     @extend_schema(responses=JogoSerializer(many=True))
     def get(self, request):
         lista = Jogo.objects.all()
@@ -92,9 +103,6 @@ class JogosListCreateView(APIView):
 
 
 class JogoDetailView(APIView):
-    authentication_classes = []
-    permission_classes = []
-
     @extend_schema(responses=JogoSerializer)
     def get(self, request, id):
         try:

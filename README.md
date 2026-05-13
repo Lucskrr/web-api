@@ -2,6 +2,7 @@
 
 ## Objetivo
 Esta API permite testar, pela interface do Swagger, os endpoints exigidos na especificação do trabalho de Programação Mobile.
+As rotas de jogos exigem autenticação por token.
 
 ## Como abrir o Swagger
 1. Ative o ambiente virtual, se necessário.
@@ -13,6 +14,8 @@ python manage.py runserver
 ```text
 http://127.0.0.1:8000/api/docs/
 ```
+
+Atalho: ao abrir `http://127.0.0.1:8000/login` no navegador (GET), a API redireciona automaticamente para o Swagger.
 
 ## Teste do login
 Abra a seção `POST /login`.
@@ -26,9 +29,20 @@ Clique em `Try it out` e envie este body:
 Resultado esperado:
 ```json
 {
-  "token": "uuid-gerado"
+  "token": "token-gerado"
 }
 ```
+
+## Autenticar no Swagger (Authorize)
+1. Copie o valor do token retornado no `POST /login`.
+2. Clique no botão `Authorize` no topo do Swagger.
+3. No campo de autenticação, informe:
+```text
+Token SEU_TOKEN_AQUI
+```
+4. Clique em `Authorize` e depois em `Close`.
+
+Sem esse passo, as rotas de jogos retornam `401 Unauthorized`.
 
 ## Teste de criação de jogo
 Abra a seção `POST /jogos`.
@@ -52,6 +66,9 @@ Abra a seção `GET /jogos` e execute a requisição.
 Resultado esperado:
 - status `200 OK`
 - lista com todos os jogos cadastrados
+
+Se não estiver autenticado no `Authorize`:
+- status `401 Unauthorized`
 
 ## Teste de busca por ID
 Abra a seção `GET /jogos/{id}`.
@@ -85,6 +102,7 @@ Resultado esperado:
 - sem corpo de resposta
 
 ## Observações
-- O Swagger está disponível em `http://127.0.0.1:8000/api/docs/`.
+- O Swagger está disponível em `https://web-api-rtnp.onrender.com/api/docs/`.
+- Em produção, abrir `https://web-api-rtnp.onrender.com/login` (GET) também redireciona para o Swagger.
 - O login do trabalho usa credenciais fixas da especificação.
-- Os endpoints de jogos seguem o CRUD pedido no PDF.
+- Os endpoints de jogos seguem o CRUD pedido no PDF e ficam protegidos por token.
