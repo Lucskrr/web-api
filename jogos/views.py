@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from drf_spectacular.utils import OpenApiExample, extend_schema
 
@@ -14,7 +14,7 @@ from .serializers import JogoSerializer, LoginSerializer, TokenSerializer
 
 class LoginView(APIView):
     authentication_classes = []
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request):
         return redirect('/api/docs/')
@@ -22,6 +22,7 @@ class LoginView(APIView):
     @extend_schema(
         request=LoginSerializer,
         responses=TokenSerializer,
+        description='Fazer login e receber um token de autenticação. Use o token no header Authorization com formato: Token <seu_token>',
         examples=[
             OpenApiExample(
                 'Login válido',
@@ -34,6 +35,7 @@ class LoginView(APIView):
                 response_only=True,
             ),
         ],
+        tags=['Autenticação'],
     )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
